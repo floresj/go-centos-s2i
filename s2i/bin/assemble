@@ -1,0 +1,25 @@
+#!/bin/bash -e
+#
+# S2I assemble script for the 'go-centos-s2i' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+# If the 'go-centos-s2i' assemble script is executed with the '-h' flag, print the usage.
+if [[ "$1" == "-h" ]]; then
+	exec /usr/libexec/s2i/usage
+fi
+
+
+echo "---> Installing application source..."
+cp -Rf /tmp/src/. ./
+
+echo "---> Building application from source..."
+if [ -d "vendor" ]; then
+  go build -mod=vendor -o /opt/app-root/gobinary
+else
+  go build -o /opt/app-root/gobinary
+fi
+
